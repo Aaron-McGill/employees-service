@@ -1,11 +1,6 @@
 package com.example.employees.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
@@ -15,11 +10,10 @@ public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-    @NotEmpty(message = "A first name must be specified when adding a new employee.")
+    @Column(nullable = false)
     private String firstName;
-    @NotEmpty(message = "A last name must be specified when adding a new employee.")
+    @Column(nullable = false)
     private String lastName;
-    @Email(message = "The provided email address is not in a valid format.")
     private String email;
     private String phoneNumber;
     private Date birthday;

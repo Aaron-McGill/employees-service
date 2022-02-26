@@ -2,6 +2,7 @@ package com.example.employees
 
 import com.example.employees.config.AppConfig
 import com.example.employees.controller.EmployeeController
+import com.example.employees.controller.RestExceptionHandler
 import com.example.employees.model.EmployeeEntity
 import com.example.employees.representation.EmployeeDTO
 import com.example.employees.service.EmployeeService
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(controllers = EmployeeController)
-@Import([EmployeeController, ConvertUtil])
+@Import([EmployeeController, ConvertUtil, RestExceptionHandler])
 @ContextConfiguration(classes = AppConfig)
 class EmployeeControllerSpec extends Specification {
 
@@ -40,11 +41,10 @@ class EmployeeControllerSpec extends Specification {
 
     static final String root = "/employees"
 
-    def "test successful post" () {
+    def "Call POST /employees endpoint with valid entity" () {
         given: "Define an employee"
-        EmployeeDTO employee = new EmployeeDTO()
-        employee.firstName = "fName"
-        employee.lastName = "lName"
+        EmployeeDTO employee = new EmployeeDTO("fName", "lName",
+                "first.last@company.com", null, null)
 
         and: "Mock response from service layer"
         EmployeeEntity entity = convertUtil.convertToEntity(employee)
@@ -66,7 +66,28 @@ class EmployeeControllerSpec extends Specification {
                 .andExpect(jsonPath("firstName").value("fName"))
                 .andExpect(jsonPath("lastName").value("lName"))
                 .andExpect(jsonPath("id").value(IsNull.notNullValue()))
-                .andExpect(jsonPath("email").doesNotExist())
+                .andExpect(jsonPath("email").value("first.last@company.com"))
                 .andExpect(jsonPath("phoneNumber").doesNotExist())
+    }
+
+    def "Call POST /employees endpoint with invalid input: #scenario" () {
+        when: "POST to create employee"
+        String requestBody = new JsonBuilder(employee).toPrettyString()
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .post(root)
+                .content(requestBody)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+        result.andDo(MockMvcResultHandlers.print())
+
+        then: "Correct error response is returned"
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message").value("Bad Request"))
+
+        where:
+        scenario                | employee
+        "missing first name"    | new EmployeeDTO(null, "last", null, null, null)
+        "missing last name"     | new EmployeeDTO("first", null, null, null, null)
+        "incorrect email"       | new EmployeeDTO("first", "last", "not a valid address", null, null)
     }
 }

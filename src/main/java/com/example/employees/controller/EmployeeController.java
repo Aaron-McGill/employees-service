@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 public class EmployeeController {
 
@@ -32,7 +34,7 @@ public class EmployeeController {
     }
 
     @PostMapping(value = "/employees")
-    public ResponseEntity<?> createEmployee(@RequestBody EmployeeDTO employee) {
+    public ResponseEntity<?> createEmployee(@Valid @RequestBody EmployeeDTO employee) {
         EmployeeEntity entity = convertUtil.convertToEntity(employee);
         entity = service.create(entity);
         return new ResponseEntity<>(convertUtil.convertToDTO(entity), HttpStatus.CREATED);

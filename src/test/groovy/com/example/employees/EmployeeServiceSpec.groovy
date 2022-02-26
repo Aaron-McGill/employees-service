@@ -6,12 +6,12 @@ import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 
 @DataJpaTest
 @Import(EmployeeService)
@@ -27,12 +27,12 @@ class EmployeeServiceSpec extends Specification {
     List<EmployeeEntity> matchingEntities
 
     def setupSpec() {
-        DateFormat formatter = new SimpleDateFormat("MM/dd/YYYY")
         testEntities = [
                 new EmployeeEntity("Bruce", "Wayne", "Bruce.Wayne@WayneCorp.com",
                         "555-123-3456", DateUtils.addYears(DateUtils.addMonths(new Date(), 1), -30)),
                 new EmployeeEntity("Lex", "Luthor", "Lex.Luthor@LexCorp.com",
-                        "123-456-7891", DateUtils.addYears(DateUtils.addMonths(new Date(), 2), -50))
+                        "123-456-7891", DateUtils.addYears(DateUtils.addMonths(new Date(), 2), -50)),
+                new EmployeeEntity("No", "Birthday", null, null, null)
         ]
         matchingEntities = [
                 new EmployeeEntity("Should", "Match", "Should.Match@Company.com",
@@ -103,6 +103,21 @@ class EmployeeServiceSpec extends Specification {
 
         cleanup:
         deleteAllEmployees()
+    }
+
+    @Unroll
+    @Transactional(propagation = Propagation.NEVER)
+    def "Create employee without #scenario" () {
+        when: "Attempt to create invalid employee"
+        service.create(invalidEntity)
+
+        then: "Exception occurs"
+        thrown DataIntegrityViolationException
+
+        where:
+        scenario            | invalidEntity
+        "a first name"      | new EmployeeEntity(null, "last", null, null, null)
+        "a last name"       | new EmployeeEntity("first", null, null, null, null)
     }
 
     private void deleteAllEmployees() {

@@ -1,23 +1,23 @@
-# Compiled class file
-*.class
+# Denylist files/folders in same directory as the .gitignore file
+/*
 
-# Log file
-*.log
+# Allowlist our source files
+!/gradle/
+!/src/
+!/saspackage/
+!/.gitignore
+!/.gitattributes
+!/build.gradle
+!/gradle.properties
+!/gradlew
+!/gradlew.bat
+!/README.md
+!/settings.gradle
 
-# BlueJ files
-*.ctxt
+# Denylist things created by the build, tools or OS
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# Some common file extensions we should ignore
+/src/**/*~
+/src/**/*.swp
+/src/**/*.bak
+/src/**/*.log

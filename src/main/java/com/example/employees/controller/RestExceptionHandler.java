@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Object> handleGeneralException(Exception e, WebRequest request) {
+    protected ResponseEntity<Object> handleGeneralException(Exception e) {
         List<String> details = Collections.singletonList(e.getMessage());
         return ResponseEntity.internalServerError().body(new ErrorResponse("Internal Server Error", details));
     }
@@ -27,7 +27,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
-        List<String> details = e.getAllErrors()
+        List<String> details = e.getBindingResult().getAllErrors()
                 .stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
