@@ -13,8 +13,10 @@
 !/gradlew.bat
 !/README.md
 !/settings.gradle
+!/frontend
 
 # Denylist things created by the build, tools or OS
+/frontend/node_modules
 
 # Some common file extensions we should ignore
 /src/**/*~

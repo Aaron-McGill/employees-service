@@ -1,7 +1,7 @@
 package com.example.employees.model;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -16,12 +16,12 @@ public class EmployeeEntity {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private Date birthday;
+    private LocalDate birthday;
 
     public EmployeeEntity() {}
 
     public EmployeeEntity(String firstName, String lastName, String email,
-                          String phoneNumber, Date birthday) {
+                          String phoneNumber, LocalDate birthday) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -69,11 +69,11 @@ public class EmployeeEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

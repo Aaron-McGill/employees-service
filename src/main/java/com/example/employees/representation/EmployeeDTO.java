@@ -1,12 +1,15 @@
 package com.example.employees.representation;
 
 
+import com.example.employees.util.LocalDateDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.util.Date;
+import java.time.LocalDate;
 
 @JsonInclude(Include.NON_NULL)
 public class EmployeeDTO {
@@ -19,12 +22,14 @@ public class EmployeeDTO {
     @Email(message = "The provided email address is not in a valid format.")
     private String email;
     private String phoneNumber;
-    private Date birthday;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(pattern="M/d/yyyy")
+    private LocalDate birthday;
 
     public EmployeeDTO() {}
 
     public EmployeeDTO(String firstName, String lastName, String email,
-                       String phoneNumber, Date birthday) {
+                       String phoneNumber, LocalDate birthday) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -72,11 +77,11 @@ public class EmployeeDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 }

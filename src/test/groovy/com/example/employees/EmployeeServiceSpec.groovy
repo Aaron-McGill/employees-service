@@ -2,7 +2,6 @@ package com.example.employees
 
 import com.example.employees.model.EmployeeEntity
 import com.example.employees.service.EmployeeService
-import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -12,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import java.time.LocalDate
 
 @DataJpaTest
 @Import(EmployeeService)
@@ -29,16 +30,16 @@ class EmployeeServiceSpec extends Specification {
     def setupSpec() {
         testEntities = [
                 new EmployeeEntity("Bruce", "Wayne", "Bruce.Wayne@WayneCorp.com",
-                        "555-123-3456", DateUtils.addYears(DateUtils.addMonths(new Date(), 1), -30)),
+                        "555-123-3456", LocalDate.now().minusYears(30).plusMonths(1)),
                 new EmployeeEntity("Lex", "Luthor", "Lex.Luthor@LexCorp.com",
-                        "123-456-7891", DateUtils.addYears(DateUtils.addMonths(new Date(), 2), -50)),
+                        "123-456-7891", LocalDate.now().minusYears(50).plusMonths(2)),
                 new EmployeeEntity("No", "Birthday", null, null, null)
         ]
         matchingEntities = [
                 new EmployeeEntity("Should", "Match", "Should.Match@Company.com",
-                        "456-789-1011", DateUtils.addYears(new Date(), -20)),
+                        "456-789-1011", LocalDate.now().minusYears(20)),
                 new EmployeeEntity("ShouldMatch", "Also", null, null,
-                        DateUtils.addYears(new Date(), -30))
+                        LocalDate.now().minusYears(30))
         ]
         testEntities.addAll(matchingEntities)
     }
@@ -65,7 +66,7 @@ class EmployeeServiceSpec extends Specification {
         "name only"                     | new EmployeeEntity("fName", "lName", null, null, null)
         "name and email"                | new EmployeeEntity("fName", "lName", "first.last@company.com", null, null)
         "name, email, and phone number" | new EmployeeEntity("fName", "lName", "first.last@company.com", "555-123-4567", null)
-        "all fields"                    | new EmployeeEntity("fName", "lName", "first.last@company.com", "555-123-4567", new Date())
+        "all fields"                    | new EmployeeEntity("fName", "lName", "first.last@company.com", "555-123-4567", LocalDate.now())
     }
 
     def "Retrieve all employees" () {
