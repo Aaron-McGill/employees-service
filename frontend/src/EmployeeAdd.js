@@ -46,7 +46,7 @@ class EmployeeAdd extends Component {
         const {item} = this.state;
 
         console.log(JSON.stringify(item))
-        axios.post('/employees', item, {
+        axios.post('http://localhost:8080/employees', item, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

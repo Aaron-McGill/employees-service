@@ -13,12 +13,12 @@ class EmployeeList extends Component {
     }
 
     componentDidMount() {
-        axios.get('/employees')
+        axios.get('http://localhost:8080/employees')
             .then(response => this.setState({employees: response.data.items}));
     }
 
     async remove(id) {
-        axios.delete(`/employees/${id}`).then(() => {
+        axios.delete(`http://localhost:8080/employees/${id}`).then(() => {
             let updatedEmployees = [...this.state.employees].filter(i => i.id !== id);
             this.setState({employees: updatedEmployees});
         });

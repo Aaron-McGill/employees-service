@@ -12,7 +12,7 @@ class EmployeeListBirthday extends Component {
     }
 
     componentDidMount() {
-        axios.get('/employeesByBirthday')
+        axios.get('http://localhost:8080/employeesByBirthday')
             .then(response => this.setState({employees: response.data.items}));
     }
 
