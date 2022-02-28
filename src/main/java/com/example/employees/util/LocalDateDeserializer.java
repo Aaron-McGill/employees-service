@@ -1,5 +1,6 @@
 package com.example.employees.util;
 
+import com.example.employees.exceptions.JsonDateParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -15,6 +16,12 @@ public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
             throws IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
-        return LocalDate.parse(p.getText(), formatter);
+        LocalDate parsedDate;
+        try {
+            parsedDate = LocalDate.parse(p.getText(), formatter);
+        } catch(Throwable e) {
+            throw new JsonDateParseException("An error occurred parsing the date: '" + p.getText() + ".' Dates are expected to be of the form: M/d/yyyy.");
+        }
+        return parsedDate;
     }
 }

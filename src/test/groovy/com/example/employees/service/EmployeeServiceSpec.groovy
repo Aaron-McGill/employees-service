@@ -1,7 +1,6 @@
-package com.example.employees
+package com.example.employees.service
 
 import com.example.employees.model.EmployeeEntity
-import com.example.employees.service.EmployeeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import

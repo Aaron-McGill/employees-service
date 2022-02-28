@@ -3,6 +3,7 @@ package com.example.employees.exceptions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +22,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleGeneralException(Exception e) {
         List<String> details = Collections.singletonList(e.getMessage());
         return ResponseEntity.internalServerError().body(new ErrorResponse("Internal Server Error", details));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<String> details = Collections.singletonList(ex.getMostSpecificCause().getMessage());
+        return ResponseEntity.badRequest().body(new ErrorResponse("Bad Request", details));
     }
 
     @Override

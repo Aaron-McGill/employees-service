@@ -1,7 +1,6 @@
-package com.example.employees
+package com.example.employees.controller
 
 import com.example.employees.config.AppConfig
-import com.example.employees.controller.EmployeeController
 import com.example.employees.exceptions.RestExceptionHandler
 import com.example.employees.model.EmployeeEntity
 import com.example.employees.representation.EmployeeDTO
