@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Table } from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import { Link } from 'react-router-dom';
+const axios = require('axios');
 
 class EmployeeListBirthday extends Component {
 
@@ -11,9 +12,8 @@ class EmployeeListBirthday extends Component {
     }
 
     componentDidMount() {
-        fetch('/employeesByBirthday')
-            .then(response => response.json())
-            .then(data => this.setState({employees: data.items}));
+        axios.get('/employeesByBirthday')
+            .then(response => this.setState({employees: response.data.items}));
     }
 
     render() {

@@ -1,4 +1,4 @@
-package com.example.employees.representation;
+package com.example.employees.exceptions;
 
 import java.util.List;
 

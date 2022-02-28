@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Container, Table } from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import { Link } from 'react-router-dom';
+const axios = require('axios');
 
 class EmployeeList extends Component {
 
@@ -12,19 +13,12 @@ class EmployeeList extends Component {
     }
 
     componentDidMount() {
-        fetch('/employees')
-            .then(response => response.json())
-            .then(data => this.setState({employees: data.items}));
+        axios.get('/employees')
+            .then(response => this.setState({employees: response.data.items}));
     }
 
     async remove(id) {
-        await fetch(`/employees/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(() => {
+        axios.delete(`/employees/${id}`).then(() => {
             let updatedEmployees = [...this.state.employees].filter(i => i.id !== id);
             this.setState({employees: updatedEmployees});
         });

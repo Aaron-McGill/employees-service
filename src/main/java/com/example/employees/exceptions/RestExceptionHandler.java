@@ -1,6 +1,5 @@
-package com.example.employees.controller;
+package com.example.employees.exceptions;
 
-import com.example.employees.representation.ErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

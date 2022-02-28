@@ -121,6 +121,20 @@ class EmployeeServiceSpec extends Specification {
         "a last name"       | new EmployeeEntity("first", null, null, null, null)
     }
 
+    def "Delete an employee" () {
+        given: "An employee exists"
+        EmployeeEntity createdEmployee = service.create(new EmployeeEntity("first", "last", null, null, null))
+
+        and: "The employee is returned when retrieving employees"
+        service.getAll() == [createdEmployee]
+
+        when: "Delete the employee"
+        service.delete(createdEmployee.id)
+
+        then: "The employee is no longer returned"
+        service.getAll() == []
+    }
+
     private void deleteAllEmployees() {
         List<EmployeeEntity> employees = service.getAll()
         employees.each { employee ->

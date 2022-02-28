@@ -4,7 +4,7 @@ import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import AppNavbar from './AppNavbar';
 const axios = require('axios');
 
-class ClientEdit extends Component {
+class EmployeeAdd extends Component {
 
     emptyItem = {
         id: '',
@@ -99,14 +99,14 @@ class ClientEdit extends Component {
                     </FormGroup>
                 </Form>
                 { this.state.errorMessage &&
-                    <div class="isa_error">
-                       <i class="fa fa-times-circle"></i>
+                    <div className="isa_error">
+                       <i className="fa fa-times-circle"></i>
                        {this.state.errorMessage}
                        <br/>{this.state.errorDetails}
                     </div>}
                 { this.state.status === 'success' &&
-                    <div class="isa_success">
-                         <i class="fa fa-check"></i>
+                    <div className="isa_success">
+                         <i className="fa fa-check"></i>
                          The employee was successfully added to the system.
                     </div>}
             </Container>
@@ -114,4 +114,4 @@ class ClientEdit extends Component {
     }
 }
 
-export default withRouter(ClientEdit);
+export default withRouter(EmployeeAdd);

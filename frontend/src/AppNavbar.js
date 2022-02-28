@@ -20,7 +20,7 @@ export default class AppNavbar extends Component {
 
     render() {
         return <Navbar color="dark">
-            <Dropdown left isOpen={this.state.dropdownOpen} toggle={this.toggle} size="lg">
+            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} size="lg">
                 <DropdownToggle caret>
                 Actions
                 </DropdownToggle>
