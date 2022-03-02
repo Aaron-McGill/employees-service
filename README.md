@@ -3,7 +3,7 @@ This project defines a basic REST API for managing employee data. The API includ
 
 * POST /employees adds a new employee to the system. These are the supported fields:
   * firstName - A String with the first name of the employee (required)
-  * lastAName - A String with the last name of the employee (required)
+  * lastName - A String with the last name of the employee (required)
   * email - A String with the employee's email (optional)
   * phoneNumber - A String with the employee's phone number (optional)
   * birthday - A String with the employee's birthday, of the form M/d/yyyy (optional)

@@ -19,7 +19,9 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.time.LocalDate
 
@@ -43,6 +45,21 @@ class EmployeeControllerSpec extends Specification {
 
     static final String root = "/employees"
     static final String birthdayEndpoint = "/employeesByBirthday"
+
+    @Shared
+    List<EmployeeEntity> singleEmployeeResponse
+
+    @Shared
+    List<EmployeeEntity> multipleEmployeeResponse
+
+    def setupSpec() {
+        singleEmployeeResponse = [new EmployeeEntity("fName", "lName", null, null, LocalDate.now().minusYears(25))]
+        multipleEmployeeResponse = [
+                new EmployeeEntity("e1", "e1", "555-555-5555", "something@something.com", LocalDate.now().minusYears(20)),
+                new EmployeeEntity("e2", "e2", null, "company@something.com", LocalDate.now().minusYears(25)),
+                new EmployeeEntity("e3", "e3", null, null, LocalDate.now().minusYears(35))
+        ]
+    }
 
     def "Call POST /employees endpoint with valid entity" () {
         given: "Define an employee"
@@ -92,27 +109,33 @@ class EmployeeControllerSpec extends Specification {
         "incorrect email"       | new EmployeeDTO("first", "last", "not a valid address", null, null)
     }
 
-    def "Call GET /employees endpoint when collection is empty" () {
+    @Unroll
+    def "Call GET #endpoint endpoint when collection is empty" () {
         given: "Define mock response from service layer"
-        Mockito.when(service.getAll()).thenReturn([])
+        Mockito.when(service."$serviceMethod"()).thenReturn([])
 
-        when: "GET all employees"
+        when: "GET employees"
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .get(root)
+                .get(endpoint)
                 .accept(MediaType.APPLICATION_JSON))
 
         then: "Request is successful and response has empty items array"
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("items", empty()))
+
+        where:
+        endpoint                | serviceMethod
+        root                    | "getAll"
+        birthdayEndpoint        | "getAllWithBirthdayInCurrentMonth"
     }
 
-    def "Call GET /employees endpoint when collection #scenario" () {
+    def "Call GET #endpoint endpoint when collection #scenario" () {
         given: "Define mock response from service layer"
-        Mockito.when(service.getAll()).thenReturn(mockedResponse)
+        Mockito.when(service."$serviceMethod"()).thenReturn(mockedResponse)
 
-        when: "GET all employees"
+        when: "GET employees"
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .get(root)
+                .get(endpoint)
                 .accept(MediaType.APPLICATION_JSON))
 
         then: "Request is successful and expected items are returned"
@@ -120,71 +143,29 @@ class EmployeeControllerSpec extends Specification {
                 .andExpect(jsonPath("items[*].firstName").value(mockedResponse.firstName))
 
         where:
-        scenario            | mockedResponse
-        "has one item"      | [new EmployeeEntity("fName", "lName", null, null, null)]
-        "has three items"   | [
-                new EmployeeEntity("e1", "e1", "555-555-5555", "something@something.com", LocalDate.now().minusYears(20)),
-                new EmployeeEntity("e2", "e2", null, "company@something.com", null),
-                new EmployeeEntity("e3", "e3", null, null, LocalDate.now().minusYears(35))
-        ]
-    }
-
-    def "Call GET /employeesByBirthday endpoint where response is empty because #scenario" () {
-        given: "Define mock response from service layer"
-        Mockito.when(service.getAllWithBirthdayInCurrentMonth()).thenReturn(mockedResponse)
-
-        when: "GET employees with birthday in the current month"
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .get(birthdayEndpoint)
-                .accept(MediaType.APPLICATION_JSON))
-
-        then: "Request is successful and response has empty items array"
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("items[*].firstName").value(mockedResponse.firstName))
-
-        where:
-        scenario                            | mockedResponse
-        "there are no employees"            | []
-        "all employees are filtered out"    | [new EmployeeEntity("fName", "lName", null, null, LocalDate.now().minusYears(20).minusMonths(2))]
-    }
-
-    def "Call GET /employeesByBirthday endpoint where #scenario" () {
-        given: "Define mock response from service layer"
-        Mockito.when(service.getAllWithBirthdayInCurrentMonth()).thenReturn(mockedResponse)
-
-        when: "GET employees with birthday in the current month"
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .get(birthdayEndpoint)
-                .accept(MediaType.APPLICATION_JSON))
-
-        then: "Request is successful and response has empty items array"
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("items[*].firstName").value(mockedResponse.firstName))
-
-        where:
-        scenario << [
-                "all employees have a birthday in the current month",
-                "one out of three employees has a birthday in the current month"
-        ]
         mockedResponse << [
-                [
-                        new EmployeeEntity("e1", "e1", null, null,
-                                LocalDate.now().minusYears(45)),
-                        new EmployeeEntity("e2", "e2", null, null,
-                                LocalDate.now().minusYears(25))
-                ],
-                [
-                        new EmployeeEntity("e1", "e1", null, null,
-                                LocalDate.now().minusYears(20).minusMonths(3)),
-                        new EmployeeEntity("e2", "e2", null, null,
-                                LocalDate.now().minusYears(25)),
-                        new EmployeeEntity("e3", "e3", null, null,
-                                LocalDate.now().minusYears(30).minusMonths(5))
-                ]
+                singleEmployeeResponse,
+                multipleEmployeeResponse,
+                singleEmployeeResponse,
+                multipleEmployeeResponse
         ]
-        expectedMatchingEmployees << [
-                ["e1", "e2"],
-                ["e2"]
+        scenario << [
+                "has one item",
+                "has three items",
+                "has one item",
+                "has three items"
+        ]
+        endpoint << [
+                root,
+                root,
+                birthdayEndpoint,
+                birthdayEndpoint
+        ]
+        serviceMethod << [
+                "getAll",
+                "getAll",
+                "getAllWithBirthdayInCurrentMonth",
+                "getAllWithBirthdayInCurrentMonth"
         ]
     }
 

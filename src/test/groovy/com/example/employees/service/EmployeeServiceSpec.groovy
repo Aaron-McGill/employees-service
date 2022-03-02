@@ -94,10 +94,6 @@ class EmployeeServiceSpec extends Specification {
             employee.firstName in matchingEntities.collect { entity -> entity.firstName }
         }
 
-        entities.each { entity ->
-            println entity.firstName
-        }
-
         then: "Expected employees are returned"
         entities == expectedEmployees
 
